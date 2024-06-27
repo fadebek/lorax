@@ -60,6 +60,12 @@ class BaseModelSource:
     def get_weight_bytes(self) -> int:
         total_size = 0
         for path in self.weight_files():
+            if path.suffix == ".tensors":
+                weight_size_file = self.weight_files(".size")[0]
+                with open(weight_size_file, "r") as f:
+                    total_size += int(f.read())
+                continue
+
             fname = str(path)
 
             # safetensor format explained here: https://huggingface.co/docs/safetensors/en/index
